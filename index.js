@@ -54,6 +54,21 @@ async function getChatCompletion(message) {
     return data.choices[0].message.content;
 }
 
+async function gptLogic(logic, message) {
+    const response = await fetch("https://api.eqing.tech/api/openai/v1/chat/completions", {
+        method: "POST",
+        body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{
+                role: 'system',
+                content: logic
+            },{ role: "user", content: message }]
+        })
+    });
+    const data = await response.json();
+    return data.choices[0].message.content;
+}
+
 // Fungsi untuk pinecone
 async function pinecone(message) {
   try {
@@ -130,6 +145,23 @@ app.get('/api/getChatCompletion', async (req, res) => {
       return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
     }
     const response = await getChatCompletion(message);
+    res.status(200).json({
+      status: 200,
+      creator: "Nayla Hanifah",
+      data: { response }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/gptLogic', async (req, res) => {
+  try {
+    const message = req.query.message;
+    if (!message) {
+      return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
+    }
+    const response = await gptLogic(logic, message);
     res.status(200).json({
       status: 200,
       creator: "Nayla Hanifah",
