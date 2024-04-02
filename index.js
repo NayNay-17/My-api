@@ -157,6 +157,10 @@ app.get('/api/getChatCompletion', async (req, res) => {
 
 app.get('/api/gptLogic', async (req, res) => {
   try {
+    const logic = req.query.logic;
+    if (!logic) {
+      retrun res.status(400).json({ erro: 'masukkan logic nya' });
+    }
     const message = req.query.message;
     if (!message) {
       return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
