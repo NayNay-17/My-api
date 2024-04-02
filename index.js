@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const axios = require('axios');
+const fetch= require ('node-fetch');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,6 +39,19 @@ async function degreeGuru(message, prompt) {
   } catch (error) {
     throw error;
   }
+}
+
+//fungsi untuk openAi
+async function getChatCompletion(message) {
+    const response = await fetch("https://api.eqing.tech/api/openai/v1/chat/completions", {
+        method: "POST",
+        body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: message }]
+        })
+    });
+    const data = await response.json();
+    return data.choices[0].message.content;
 }
 
 // Fungsi untuk pinecone
@@ -98,6 +112,24 @@ app.get('/api/ragbot', async (req, res) => {
       return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
     }
     const response = await ragBot(message);
+    res.status(200).json({
+      status: 200,
+      creator: "Nayla Hanifah",
+      data: { response }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint untuk openAi
+app.get('/api/getChatCompletion', async (req, res) => {
+  try {
+    const message = req.query.message;
+    if (!message) {
+      return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
+    }
+    const response = await getChatCompletion(message);
     res.status(200).json({
       status: 200,
       creator: "Nayla Hanifah",
