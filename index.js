@@ -137,6 +137,7 @@ app.get('/api/ragbot', async (req, res) => {
   }
 });
 
+
 // Endpoint untuk openAi
 app.get('/api/getChatCompletion', async (req, res) => {
   try {
@@ -238,6 +239,25 @@ app.get('/api/blackboxAIChat', async (req, res) => {
       return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
     }
     const response = await blackboxAIChat(message);
+    res.status(200).json({
+      status: 200,
+      creator: "Nayla Hanifah",
+      data: { response }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint Remini
+
+app.get('/api/remini', async (req, res) => {
+  try {
+    const url = req.query.url;
+    if (!url) {
+      return res.status(400).json({ error: 'Parameter "url" tidak ditemukan' });
+    }
+    const response = await axios.get(`https://akkun3704-helper.hf.space/hd?url=${url}`);
     res.status(200).json({
       status: 200,
       creator: "Nayla Hanifah",
