@@ -257,7 +257,7 @@ app.get('/api/remini', async (req, res) => {
     if (!url) {
       return res.status(400).json({ error: 'Parameter "url" tidak ditemukan' });
     }
-    const response = await axios.get(`hhttps://nekonekoid-helper.hf.space/hd?url=${url}`);
+    const response = await axios.get(`https://nekonekoid-helper.hf.space/hd?url=${url}`);
     res.status(200).json({
       status: 200,
       creator: "Nayla Hanifah",
