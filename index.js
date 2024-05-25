@@ -12,6 +12,12 @@ app.set("json spaces", 2);
 // Middleware untuk CORS
 app.use(cors());
 
+// Fungsi untuk gemini
+async function gemini(question) {
+  const response = await axios.post('https://bard.rizzy.eu.org/backend/conversation', { ask: question });
+  return response.data.content;
+}
+
 // Fungsi untuk ragBot
 async function ragBot(message) {
   try {
@@ -117,6 +123,23 @@ async function blackboxAIChat(message) {
 // Endpoint untuk servis dokumen HTML
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/api/gemini', async (req, res) => {
+  try {
+    const { message }= req.query;
+    if (!message) {
+      return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
+    }
+    const response = await gemini(message);
+    res.status(200).json({
+      status: 200,
+      creator: "Nayla Hanifah",
+      data: { response }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Endpoint untuk ragBot
